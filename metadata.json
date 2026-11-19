@@ -1,0 +1,6 @@
+{
+  "name": "X Chat",
+  "description": "Unified social networking, real-time messaging, communities, dating discovery, and live interactive battles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

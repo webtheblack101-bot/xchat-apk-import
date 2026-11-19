@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">X Chat</string>
+    <string name="sign_in_with_google">Continue with Google</string>
+    <string name="tagline">Social, Communities, Live Battles &amp; Mindful Discovery</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_discover">Discover</string>
+    <string name="nav_battles">Battles</string>
+    <string name="nav_chats">Chats</string>
+    <string name="nav_profile">Profile</string>
+    <string name="battle_disclaimer">Real-Time Interactive Battle • Virtual non-monetary gifts only</string>
+    <string name="age_gate_notice">Dating discovery requires 18+ age verification and shares only city-level location.</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+</resources>

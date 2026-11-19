@@ -1,0 +1,450 @@
+{
+  "entities": {
+    "PublicUser": {
+      "title": "PublicUser",
+      "description": "Public social profile excluding sensitive PII",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID" },
+        "username": { "type": "string", "description": "Unique lowercase handle" },
+        "displayName": { "type": "string", "description": "Public display name" },
+        "bio": { "type": "string", "description": "Short social biography" },
+        "avatarData": { "type": "string", "description": "Compressed base64 avatar or photo URL" },
+        "interests": { "type": "array", "description": "Selected interest tags (max 15)" },
+        "languages": { "type": "array", "description": "Spoken languages (max 10)" },
+        "accountStatus": { "type": "string", "enum": ["active", "restricted", "suspended"] },
+        "onlineVisible": { "type": "boolean", "description": "Whether online activity status is shared" },
+        "lastActiveAt": { "type": "string", "format": "date-time", "description": "Client must submit FieldValue.serverTimestamp()" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Client must submit FieldValue.serverTimestamp()" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Client must submit FieldValue.serverTimestamp()" }
+      },
+      "required": ["userId", "username", "displayName", "bio", "interests", "languages", "accountStatus", "onlineVisible", "createdAt", "updatedAt"]
+    },
+    "PrivateAccount": {
+      "title": "PrivateAccount",
+      "description": "Owner-only PII and privacy/notification settings",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "birthYear": { "type": "integer" },
+        "ageVerified": { "type": "boolean" },
+        "showOnlineStatus": { "type": "boolean" },
+        "allowFriendRequests": { "type": "boolean" },
+        "notifyMessages": { "type": "boolean" },
+        "notifyMatches": { "type": "boolean" },
+        "notifyGroups": { "type": "boolean" },
+        "notifyBattles": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "email", "birthYear", "ageVerified", "showOnlineStatus", "allowFriendRequests", "notifyMessages", "notifyMatches", "notifyGroups", "notifyBattles", "createdAt", "updatedAt"]
+    },
+    "FriendConnection": {
+      "title": "FriendConnection",
+      "description": "Social friend/connection entry scoped under a user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "friendUid": { "type": "string" },
+        "friendName": { "type": "string" },
+        "friendUsername": { "type": "string" },
+        "status": { "type": "string", "enum": ["connected", "pending"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "friendUid", "friendName", "friendUsername", "status", "createdAt"]
+    },
+    "GroupMembershipIndex": {
+      "title": "GroupMembershipIndex",
+      "description": "Owner-scoped index of joined groups",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "groupId": { "type": "string" },
+        "groupName": { "type": "string" },
+        "visibility": { "type": "string", "enum": ["public", "private"] },
+        "role": { "type": "string", "enum": ["owner", "admin", "moderator", "member"] },
+        "joinedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "groupId", "groupName", "visibility", "role", "joinedAt"]
+    },
+    "DatingProfile": {
+      "title": "DatingProfile",
+      "description": "Opt-in 18+ dating profile with city-level approximate location",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "datingEnabled": { "type": "boolean" },
+        "datingBio": { "type": "string" },
+        "age": { "type": "integer" },
+        "city": { "type": "string" },
+        "relationshipIntent": { "type": "string", "enum": ["dating", "serious", "casual", "friendship", "social"] },
+        "conversationStyle": { "type": "string", "enum": ["deep_talks", "playful", "quick_banter", "voice_friendly"] },
+        "availabilityStatus": { "type": "string", "enum": ["available_now", "tonight", "weekend", "offline"] },
+        "interests": { "type": "array" },
+        "languages": { "type": "array" },
+        "preferredAgeMin": { "type": "integer" },
+        "preferredAgeMax": { "type": "integer" },
+        "preferredCity": { "type": "string" },
+        "preferredIntents": { "type": "array" },
+        "preferredLanguages": { "type": "array" },
+        "photos": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "displayName", "datingEnabled", "datingBio", "age", "city", "relationshipIntent", "conversationStyle", "availabilityStatus", "interests", "languages", "preferredAgeMin", "preferredAgeMax", "preferredCity", "preferredIntents", "preferredLanguages", "photos", "createdAt", "updatedAt"]
+    },
+    "BlockRecord": {
+      "title": "BlockRecord",
+      "description": "User block safety record",
+      "type": "object",
+      "properties": {
+        "blockerId": { "type": "string" },
+        "blockedId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["blockerId", "blockedId", "createdAt"]
+    },
+    "Group": {
+      "title": "Group",
+      "description": "Public or private social community group",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "visibility": { "type": "string", "enum": ["public", "private"] },
+        "ownerId": { "type": "string" },
+        "imageData": { "type": "string" },
+        "memberCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "description", "visibility", "ownerId", "memberCount", "createdAt", "updatedAt"]
+    },
+    "GroupMember": {
+      "title": "GroupMember",
+      "description": "Membership & role record within a group",
+      "type": "object",
+      "properties": {
+        "groupId": { "type": "string" },
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "username": { "type": "string" },
+        "role": { "type": "string", "enum": ["owner", "admin", "moderator", "member"] },
+        "status": { "type": "string", "enum": ["active", "pending"] },
+        "joinedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["groupId", "userId", "displayName", "username", "role", "status", "joinedAt", "updatedAt"]
+    },
+    "GroupInvite": {
+      "title": "GroupInvite",
+      "description": "Revocable group invitation token",
+      "type": "object",
+      "properties": {
+        "groupId": { "type": "string" },
+        "inviterId": { "type": "string" },
+        "inviteCode": { "type": "string" },
+        "revoked": { "type": "boolean" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["groupId", "inviterId", "inviteCode", "revoked", "expiresAt", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Direct or group conversation metadata",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["direct", "group"] },
+        "groupId": { "type": "string" },
+        "title": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "lastMessagePreview": { "type": "string" },
+        "lastSenderId": { "type": "string" },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "unreadCounts": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "memberUids", "lastMessagePreview", "createdAt", "updatedAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Real-time message in a conversation with denormalized memberUids",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "messageType": { "type": "string", "enum": ["text", "image", "system"] },
+        "content": { "type": "string" },
+        "mediaData": { "type": "string" },
+        "readBy": { "type": "array" },
+        "deleted": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["conversationId", "senderId", "senderName", "memberUids", "messageType", "content", "readBy", "deleted", "createdAt", "updatedAt"]
+    },
+    "LikeInteraction": {
+      "title": "LikeInteraction",
+      "description": "Discovery like, superlike, or pass interaction",
+      "type": "object",
+      "properties": {
+        "fromUserId": { "type": "string" },
+        "toUserId": { "type": "string" },
+        "interactionType": { "type": "string", "enum": ["like", "superlike", "pass"] },
+        "intentContext": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fromUserId", "toUserId", "interactionType", "intentContext", "createdAt"]
+    },
+    "MatchRecord": {
+      "title": "MatchRecord",
+      "description": "Mutual match created atomically upon reciprocal likes",
+      "type": "object",
+      "properties": {
+        "userAId": { "type": "string" },
+        "userBId": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "status": { "type": "string", "enum": ["active", "unmatched"] },
+        "conversationId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userAId", "userBId", "memberUids", "status", "conversationId", "createdAt", "updatedAt"]
+    },
+    "RecommendationEvent": {
+      "title": "RecommendationEvent",
+      "description": "Contextual recommendation impression or feedback event",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "targetUserId": { "type": "string" },
+        "eventType": { "type": "string", "enum": ["profile_impression", "profile_opened", "like", "superlike", "pass", "match", "chat_started", "more_like_this", "less_like_this"] },
+        "intentContext": { "type": "string" },
+        "hourOfDay": { "type": "integer" },
+        "dayOfWeek": { "type": "integer" },
+        "position": { "type": "integer" },
+        "modelVersion": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "targetUserId", "eventType", "intentContext", "hourOfDay", "dayOfWeek", "position", "modelVersion", "createdAt"]
+    },
+    "RecommendationPreference": {
+      "title": "RecommendationPreference",
+      "description": "User-editable recommendation weights and feedback tags",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "personalizedEnabled": { "type": "boolean" },
+        "boostedTags": { "type": "array" },
+        "suppressedTags": { "type": "array" },
+        "preferredHourBucket": { "type": "string" },
+        "modelVersion": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "personalizedEnabled", "boostedTags", "suppressedTags", "preferredHourBucket", "modelVersion", "updatedAt"]
+    },
+    "Battle": {
+      "title": "Battle",
+      "description": "Real-time interactive battle room",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "topic": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "challengerId": { "type": "string" },
+        "challengerName": { "type": "string" },
+        "opponentId": { "type": "string" },
+        "opponentName": { "type": "string" },
+        "challengerScore": { "type": "integer" },
+        "opponentScore": { "type": "integer" },
+        "status": { "type": "string", "enum": ["waiting", "live", "completed"] },
+        "durationSeconds": { "type": "integer" },
+        "winnerId": { "type": "string" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "endsAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "topic", "creatorId", "challengerId", "challengerName", "opponentId", "opponentName", "challengerScore", "opponentScore", "status", "durationSeconds", "winnerId", "createdAt", "updatedAt"]
+    },
+    "BattleComment": {
+      "title": "BattleComment",
+      "description": "Real-time spectator comment in a battle",
+      "type": "object",
+      "properties": {
+        "battleId": { "type": "string" },
+        "userId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["battleId", "userId", "authorName", "content", "createdAt"]
+    },
+    "BattleGift": {
+      "title": "BattleGift",
+      "description": "Non-monetary virtual gift sent during a live battle",
+      "type": "object",
+      "properties": {
+        "battleId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "recipientId": { "type": "string" },
+        "giftType": { "type": "string", "enum": ["heart", "fire", "rose", "crown"] },
+        "points": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["battleId", "senderId", "senderName", "recipientId", "giftType", "points", "createdAt"]
+    },
+    "NotificationItem": {
+      "title": "NotificationItem",
+      "description": "In-app notification scoped to a recipient user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["message", "match", "like", "group_invite", "battle", "system"] },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "entityId": { "type": "string" },
+        "readFlag": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "type", "title", "body", "entityId", "readFlag", "createdAt", "updatedAt"]
+    },
+    "ReportItem": {
+      "title": "ReportItem",
+      "description": "Safety/abuse report submitted by a user",
+      "type": "object",
+      "properties": {
+        "reporterId": { "type": "string" },
+        "reportedUserId": { "type": "string" },
+        "targetType": { "type": "string", "enum": ["user", "group", "message", "battle"] },
+        "targetId": { "type": "string" },
+        "reason": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "reviewed", "resolved", "dismissed"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["reporterId", "reportedUserId", "targetType", "targetId", "reason", "description", "status", "createdAt", "updatedAt"]
+    },
+    "ModerationAction": {
+      "title": "ModerationAction",
+      "description": "Admin-only moderation audit log entry",
+      "type": "object",
+      "properties": {
+        "moderatorId": { "type": "string" },
+        "targetUserId": { "type": "string" },
+        "actionType": { "type": "string", "enum": ["warn", "restrict", "suspend", "restore", "dismiss_report"] },
+        "reason": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["moderatorId", "targetUserId", "actionType", "reason", "createdAt"]
+    },
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Trusted administrator marker",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string" }
+      },
+      "required": ["role"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/PublicUser" },
+      "description": "Public social profiles"
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/PrivateAccount" },
+      "description": "Owner-only PII and preferences"
+    },
+    "/users/{userId}/friends/{friendUid}": {
+      "schema": { "$ref": "#/entities/FriendConnection" },
+      "description": "Social friend connections"
+    },
+    "/users/{userId}/group_memberships/{groupId}": {
+      "schema": { "$ref": "#/entities/GroupMembershipIndex" },
+      "description": "User-scoped index of joined groups"
+    },
+    "/dating_profiles/{userId}": {
+      "schema": { "$ref": "#/entities/DatingProfile" },
+      "description": "Opt-in 18+ dating profiles"
+    },
+    "/blocks/{blockId}": {
+      "schema": { "$ref": "#/entities/BlockRecord" },
+      "description": "User blocks"
+    },
+    "/groups/{groupId}": {
+      "schema": { "$ref": "#/entities/Group" },
+      "description": "Public and private community groups"
+    },
+    "/groups/{groupId}/members/{memberUid}": {
+      "schema": { "$ref": "#/entities/GroupMember" },
+      "description": "Group membership and role records"
+    },
+    "/group_invites/{inviteId}": {
+      "schema": { "$ref": "#/entities/GroupInvite" },
+      "description": "Revocable group invite tokens"
+    },
+    "/conversations/{convId}": {
+      "schema": { "$ref": "#/entities/Conversation" },
+      "description": "1:1 and group conversations"
+    },
+    "/conversations/{convId}/messages/{msgId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Messages within a conversation"
+    },
+    "/likes/{likeId}": {
+      "schema": { "$ref": "#/entities/LikeInteraction" },
+      "description": "Discovery like/superlike/pass records"
+    },
+    "/matches/{matchId}": {
+      "schema": { "$ref": "#/entities/MatchRecord" },
+      "description": "Deterministic mutual match records"
+    },
+    "/recommendation_events/{eventId}": {
+      "schema": { "$ref": "#/entities/RecommendationEvent" },
+      "description": "Contextual recommendation interaction events"
+    },
+    "/recommendation_preferences/{userId}": {
+      "schema": { "$ref": "#/entities/RecommendationPreference" },
+      "description": "User recommendation preference settings"
+    },
+    "/battles/{battleId}": {
+      "schema": { "$ref": "#/entities/Battle" },
+      "description": "Real-time interactive battle rooms"
+    },
+    "/battles/{battleId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/BattleComment" },
+      "description": "Spectator comments in a battle"
+    },
+    "/battles/{battleId}/gifts/{giftId}": {
+      "schema": { "$ref": "#/entities/BattleGift" },
+      "description": "Virtual gifts sent in a battle"
+    },
+    "/notifications/{notifId}": {
+      "schema": { "$ref": "#/entities/NotificationItem" },
+      "description": "User-scoped notifications"
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/ReportItem" },
+      "description": "Safety and abuse reports"
+    },
+    "/moderation_actions/{actionId}": {
+      "schema": { "$ref": "#/entities/ModerationAction" },
+      "description": "Admin moderation audit log"
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminRecord" },
+      "description": "Trusted administrator registry"
+    }
+  }
+}
